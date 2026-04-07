@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BanShield Premium</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --primary: #0088cc;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f8fafc;
+        }
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .header { text-align: center; margin-bottom: 25px; }
+        .header h1 { font-size: 24px; color: var(--primary); margin: 5px; }
+        .header p { opacity: 0.7; font-size: 14px; }
+        
+        .card {
+            background: var(--card);
+            width: 100%; max-width: 400px;
+            border-radius: 16px;
+            padding: 20px; margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid #334155;
+        }
+        .price { color: #22c55e; font-weight: bold; float: right; }
+        button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:active { transform: scale(0.98); opacity: 0.8; }
+        .copy-btn { background: #334155; font-size: 12px; padding: 5px 10px; width: auto; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>BanShield Connect 🛡️</h1>
+        <p>Premium WhatsApp & Virtual Number Solutions</p>
+    </div>
+
+    <div id="step-country" class="card">
+        <h3>Select Your Region</h3>
+        <button onclick="showServices('NG')">Nigeria 🇳🇬</button>
+        <button onclick="showServices('INTL')">International 🌍</button>
+    </div>
+
+    <div id="step-services" class="card" style="display:none;">
+        <h3 id="region-title">Available Services</h3>
+        <div style="margin-bottom: 15px;">
+            <span>Anti-ban Protection</span> <span class="price">₦5,000 / $10</span>
+            <button onclick="showPayment('Anti-ban')">Select</button>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <span>Unlimited Numbers</span> <span class="price">₦10,000 / $20</span>
+            <button onclick="showPayment('Unlimited')">Select</button>
+        </div>
+        <div style="margin-bottom: 15px;">
+            <span>Ban WhatsApp</span> <span class="price">₦7,000 / $15</span>
+            <button onclick="showPayment('Ban')">Select</button>
+        </div>
+    </div>
+
+    <div id="step-payment" class="card" style="display:none;">
+        <h3 id="pay-title">Complete Payment</h3>
+        <p id="payment-instructions"></p>
+        <button onclick="window.Telegram.WebApp.close()">Done / Send Receipt</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        let selectedCountry = '';
+
+        function showServices(country) {
+            selectedCountry = country;
+            document.getElementById('step-country').style.display = 'none';
+            document.getElementById('step-services').style.display = 'block';
+            document.getElementById('region-title').innerText = country === 'NG' ? 'Nigeria Services 🇳🇬' : 'Global Services 🌍';
+        }
+
+        function showPayment(service) {
+            document.getElementById('step-services').style.display = 'none';
+            document.getElementById('step-payment').style.display = 'block';
+            
+            let payText = "";
+            if (selectedCountry === 'NG') {
+                payText = "<b>Local Bank Transfer:</b><br>Bank: OPay / Kuda<br>Acc: 0123456789<br>Name: Your Name<br><br>Send screenshot to Admin.";
+            } else {
+                payText = "<b>Cryptocurrency Only:</b><br>USDT (TRC20): <code>YOUR_WALLET_HERE</code><br><br>Send screenshot to Admin.";
+            }
+            document.getElementById('payment-instructions').innerHTML = payText;
+        }
+    </script>
+</body>
+</html>
