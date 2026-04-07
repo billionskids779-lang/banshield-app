@@ -8,104 +8,151 @@
     <style>
         :root {
             --primary: #0088cc;
-            --bg: #0f172a;
-            --card: #1e293b;
+            --accent: #22c55e;
+            --error: #ef4444;
+            --bg: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+            --card: rgba(30, 41, 59, 0.6);
             --text: #f8fafc;
         }
         body {
-            background-color: var(--bg);
+            background: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0; padding: 20px;
-            display: flex; flex-direction: column; align-items: center;
+            font-family: 'Inter', sans-serif;
+            margin: 0; padding: 15px;
+            min-height: 100vh;
+            display: flex; flex-direction: column;
         }
-        .header { text-align: center; margin-bottom: 25px; }
-        .header h1 { font-size: 24px; color: var(--primary); margin: 5px; }
-        .header p { opacity: 0.7; font-size: 14px; }
+        .header { text-align: center; margin: 20px 0; }
+        .header h1 { font-size: 30px; color: var(--primary); margin: 0; text-transform: uppercase; letter-spacing: 2px; }
         
         .card {
             background: var(--card);
-            width: 100%; max-width: 400px;
-            border-radius: 16px;
-            padding: 20px; margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid #334155;
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 24px; margin-bottom: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            display: none; /* Hidden by default */
         }
-        .price { color: #22c55e; font-weight: bold; float: right; }
+        .active { display: block; animation: slideUp 0.4s ease-out; }
+
+        .timer-box {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            padding: 10px; border-radius: 10px;
+            text-align: center; font-weight: bold; font-size: 18px;
+            margin-bottom: 15px; border: 1px solid var(--error);
+        }
+
         button {
-            width: 100%;
-            padding: 14px;
-            margin-top: 10px;
-            border-radius: 10px;
-            border: none;
-            background: var(--primary);
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
+            width: 100%; padding: 16px; border-radius: 14px; border: none;
+            background: var(--primary); color: white; font-weight: 700;
+            margin-top: 12px; cursor: pointer; transition: 0.3s;
+            font-size: 16px;
         }
-        button:active { transform: scale(0.98); opacity: 0.8; }
-        .copy-btn { background: #334155; font-size: 12px; padding: 5px 10px; width: auto; margin-top: 5px; }
+        button:disabled { background: #475569; cursor: not-allowed; }
+        .secondary-btn { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+
+        .copy-area {
+            background: #000; padding: 15px; border-radius: 10px;
+            font-family: monospace; font-size: 14px; margin: 15px 0;
+            border: 1px solid #334155; color: var(--accent);
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>BanShield Connect 🛡️</h1>
-        <p>Premium WhatsApp & Virtual Number Solutions</p>
+        <h1>BANSHIELD 🛡️</h1>
+        <p style="opacity: 0.6;">Secure Digital Assets</p>
     </div>
 
-    <div id="step-country" class="card">
-        <h3>Select Your Region</h3>
-        <button onclick="showServices('NG')">Nigeria 🇳🇬</button>
-        <button onclick="showServices('INTL')">International 🌍</button>
+    <div id="p-region" class="card active">
+        <h3 style="text-align:center;">Welcome, select your region</h3>
+        <button onclick="setRegion('NG')">Nigeria 🇳🇬 (Bank)</button>
+        <button onclick="setRegion('INTL')">International 🌍 (Crypto)</button>
     </div>
 
-    <div id="step-services" class="card" style="display:none;">
-        <h3 id="region-title">Available Services</h3>
-        <div style="margin-bottom: 15px;">
-            <span>Anti-ban Protection</span> <span class="price">₦5,000 / $10</span>
-            <button onclick="showPayment('Anti-ban')">Select</button>
-        </div>
-        <div style="margin-bottom: 15px;">
-            <span>Unlimited Numbers</span> <span class="price">₦10,000 / $20</span>
-            <button onclick="showPayment('Unlimited')">Select</button>
-        </div>
-        <div style="margin-bottom: 15px;">
-            <span>Ban WhatsApp</span> <span class="price">₦7,000 / $15</span>
-            <button onclick="showPayment('Ban')">Select</button>
-        </div>
+    <div id="p-services" class="card">
+        <h3 id="srv-title">Services</h3>
+        <button onclick="openPay('Anti-ban', 5000, 10)">🛡️ Anti-ban Protection</button>
+        <button onclick="openPay('Unlimited', 10000, 20)">📱 Unlimited Numbers</button>
+        <button onclick="openPay('BanWA', 7000, 15)">🚫 Ban WhatsApp</button>
+        <button class="secondary-btn" onclick="nav('p-region')">Back</button>
     </div>
 
-    <div id="step-payment" class="card" style="display:none;">
-        <h3 id="pay-title">Complete Payment</h3>
-        <p id="payment-instructions"></p>
-        <button onclick="window.Telegram.WebApp.close()">Done / Send Receipt</button>
+    <div id="p-pay" class="card">
+        <div class="timer-box" id="timer">Expires in: 10:00</div>
+        <h3>Activate <span id="active-srv"></span></h3>
+        <p id="price-display" style="color: var(--accent); font-weight: bold;"></p>
+        
+        <div id="pay-instructions"></div>
+
+        <div style="margin-top:20px;">
+            <label style="font-size: 13px; opacity: 0.8;">Upload Payment Proof (Required):</label>
+            <input type="file" id="file-upload" onchange="enableSubmit()" style="margin-top:10px; color:white;">
+        </div>
+
+        <button id="submit-btn" disabled onclick="contactAdmin()">Confirm & Message Admin</button>
+        <button class="secondary-btn" onclick="nav('p-services')">Cancel</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        let selectedCountry = '';
 
-        function showServices(country) {
-            selectedCountry = country;
-            document.getElementById('step-country').style.display = 'none';
-            document.getElementById('step-services').style.display = 'block';
-            document.getElementById('region-title').innerText = country === 'NG' ? 'Nigeria Services 🇳🇬' : 'Global Services 🌍';
+        let currentRegion = 'NG';
+        let timerInterval;
+
+        function nav(id) {
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id !== 'p-pay') clearInterval(timerInterval);
         }
 
-        function showPayment(service) {
-            document.getElementById('step-services').style.display = 'none';
-            document.getElementById('step-payment').style.display = 'block';
+        function setRegion(r) {
+            currentRegion = r;
+            document.getElementById('srv-title').innerText = r === 'NG' ? 'Nigeria Services' : 'Global Services';
+            nav('p-services');
+        }
+
+        function openPay(name, priceNg, priceUsd) {
+            document.getElementById('active-srv').innerText = name;
+            document.getElementById('price-display').innerText = currentRegion === 'NG' ? 'Price: ₦' + priceNg : 'Price: $' + priceUsd;
             
-            let payText = "";
-            if (selectedCountry === 'NG') {
-                payText = "<b>Local Bank Transfer:</b><br>Bank: OPay / Kuda<br>Acc: 0123456789<br>Name: Your Name<br><br>Send screenshot to Admin.";
+            let instr = "";
+            if (currentRegion === 'NG') {
+                instr = `<div class="copy-area">BANK: Smartcash Payment Service Bank<br>ACC: 0222923642<br>NAME: LOVELINE UCHENDU</div>`;
             } else {
-                payText = "<b>Cryptocurrency Only:</b><br>USDT (TRC20): <code>YOUR_WALLET_HERE</code><br><br>Send screenshot to Admin.";
+                instr = `<div class="copy-area">USDT (BEP20):<br>0x4FCD356d4983549F77846c3f1fD2Ae44453A3e48</div>`;
             }
-            document.getElementById('payment-instructions').innerHTML = payText;
+            document.getElementById('pay-instructions').innerHTML = instr;
+            
+            startTimer();
+            nav('p-pay');
+        }
+
+        function startTimer() {
+            let time = 600; // 10 minutes
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                let mins = Math.floor(time / 60);
+                let secs = time % 60;
+                document.getElementById('timer').innerText = `Expires in: ${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                if (time <= 0) startTimer(); // Restarts as requested
+                time--;
+            }, 1000);
+        }
+
+        function enableSubmit() {
+            document.getElementById('submit-btn').disabled = false;
+        }
+
+        function contactAdmin() {
+            // Replace 'YourUsername' with your real Telegram username (without the @)
+            window.open("https://t.me/jackefg34", "_blank");
         }
     </script>
 </body>
