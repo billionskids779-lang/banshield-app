@@ -77,7 +77,7 @@
 
     <div id="p-services" class="card">
         <h3 id="srv-title">Services</h3>
-        <button onclick="openPay('Anti-ban', 5000, 10)">🛡️ Anti-ban Protection</button>
+        <button onclick="openPay('Anti-ban', 1870.86, 1.36)">🛡️ Anti-ban Protection</button>
         <button onclick="openPay('Unlimited', 10000, 20)">📱 Unlimited Numbers</button>
         <button onclick="openPay('BanWA', 7000, 15)">🚫 Ban WhatsApp</button>
         <button class="secondary-btn" onclick="nav('p-region')">Back</button>
@@ -118,7 +118,7 @@
             nav('p-services');
         }
 
-        function openPay(name, NGN 1,869.80,USD 1.35) {
+        function openPay(name, priceNg, priceUsd) {
             document.getElementById('active-srv').innerText = name;
             document.getElementById('price-display').innerText = currentRegion === 'NG' ? 'Price: ₦' + priceNg : 'Price: $' + priceUsd;
             
